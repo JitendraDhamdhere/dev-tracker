@@ -1,0 +1,109 @@
+/* Responsive CSS - Media queries for tablets and mobile devices */
+
+/* Tablet & Smaller Laptops (1024px and below) */
+@media screen and (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .dashboard-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* Mobile & Tablet Portrait (768px and below) */
+@media screen and (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    top: 0;
+    left: calc(-1 * var(--sidebar-width));
+    height: 100vh;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.4);
+    z-index: 999;
+  }
+  
+  /* Sidebar Open State */
+  body.sidebar-open #sidebar {
+    left: 0;
+  }
+  
+  /* Sidebar Overlay when open */
+  body.sidebar-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 998;
+  }
+  
+  .menu-toggle {
+    display: block;
+    margin-right: 12px;
+  }
+  
+  #header {
+    padding: 0 16px;
+  }
+  
+  .search-container {
+    display: none; /* Hide global header search on mobile, can access via toggle */
+  }
+  
+  .view-panel {
+    padding: 20px 16px;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tiny Mobile Screens (480px and below) */
+@media screen and (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-title {
+    font-size: 18px;
+  }
+  
+  .header-actions {
+    gap: 8px;
+  }
+  
+  .header-btn {
+    width: 34px;
+    height: 34px;
+  }
+  
+  .panel-footer {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  /* Modal responsive resizing */
+  .modal-container {
+    width: 95%;
+    max-height: 90vh;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .modal-footer {
+    padding: 12px 16px;
+  }
+}
