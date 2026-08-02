@@ -13,6 +13,7 @@
       this.renderCertifications();
       this.renderHabits();
       this.renderDailyPlanner();
+      this.renderSyncSettings();
     },
 
     initEventListeners: function () {
@@ -33,6 +34,13 @@
       if (btnExport) btnExport.addEventListener('click', () => this.exportBackup());
       if (inputImport) inputImport.addEventListener('change', (e) => this.importBackup(e));
       if (btnReset) btnReset.addEventListener('click', () => this.resetDashboard());
+
+      // Cloud sync event listeners
+      const btnSaveSync = document.getElementById('btn-save-sync-settings');
+      const btnTriggerSync = document.getElementById('btn-trigger-sync');
+      
+      if (btnSaveSync) btnSaveSync.addEventListener('click', () => this.saveSyncSettings());
+      if (btnTriggerSync) btnTriggerSync.addEventListener('click', () => this.triggerSync());
 
       // Resume Editor triggers
       const addResumeBtn = document.getElementById('btn-add-resume');
@@ -455,6 +463,87 @@
       StorageService.resetAll();
       Utils.showToast('Dashboard Resetting', 'Clearing all custom data...', 'warning');
       setTimeout(() => window.location.reload(), 1500);
+    },
+
+    saveSyncSettings: function () {
+      const patInput = document.getElementById('sync-github-token');
+      const gistIdInput = document.getElementById('sync-gist-id');
+      if (!patInput) return;
+
+      const pat = patInput.value.trim();
+      const gistId = gistIdInput ? gistIdInput.value.trim() : '';
+
+      if (!pat) {
+        StorageService.saveSyncSettings('', '');
+        Utils.showToast('Sync Disconnected', 'GitHub sync token cleared.', 'warning');
+        this.renderSyncSettings();
+        return;
+      }
+
+      const statusMsg = document.getElementById('sync-status-msg');
+      if (statusMsg) statusMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying connection...';
+
+      StorageService.saveSyncSettings(pat, gistId);
+
+      StorageService.syncPush()
+        .then(() => {
+          const newSettings = StorageService.getSyncSettings();
+          if (gistIdInput) gistIdInput.value = newSettings.gistId;
+          
+          Utils.showToast('Sync Connected', 'GitHub sync is active and backed up.', 'success');
+          this.renderSyncSettings();
+        })
+        .catch(err => {
+          console.error(err);
+          Utils.showToast('Connection Failed', 'Invalid GitHub PAT or permission issue: ' + err.message, 'danger');
+          if (statusMsg) statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i> Connection failed';
+        });
+    },
+
+    triggerSync: function () {
+      const btnTriggerSync = document.getElementById('btn-trigger-sync');
+      const statusMsg = document.getElementById('sync-status-msg');
+      if (btnTriggerSync) btnTriggerSync.disabled = true;
+      if (statusMsg) statusMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing from cloud...';
+
+      StorageService.syncPull()
+        .then(() => {
+          Utils.showToast('Sync Completed', 'Data updated from GitHub Gist. Reloading...', 'success');
+          setTimeout(() => window.location.reload(), 1500);
+        })
+        .catch(err => {
+          console.error(err);
+          Utils.showToast('Sync Failed', 'Failed to retrieve sync data: ' + err.message, 'danger');
+          this.renderSyncSettings();
+        });
+    },
+
+    renderSyncSettings: function () {
+      const patInput = document.getElementById('sync-github-token');
+      const gistIdInput = document.getElementById('sync-gist-id');
+      const statusMsg = document.getElementById('sync-status-msg');
+      const btnTriggerSync = document.getElementById('btn-trigger-sync');
+
+      const settings = StorageService.getSyncSettings();
+
+      if (patInput) patInput.value = settings.pat;
+      if (gistIdInput) gistIdInput.value = settings.gistId;
+
+      if (settings.pat) {
+        if (btnTriggerSync) btnTriggerSync.disabled = false;
+        if (statusMsg) {
+          if (settings.gistId) {
+            statusMsg.innerHTML = `<i class="fas fa-check-circle text-success"></i> Connected (Gist: <a href="https://gist.github.com/${settings.gistId}" target="_blank" style="color:var(--primary); text-decoration:underline;">${settings.gistId.substring(0, 8)}...</a>)`;
+          } else {
+            statusMsg.innerHTML = '<i class="fas fa-exclamation-circle text-warning"></i> Connected (No Gist created yet)';
+          }
+        }
+      } else {
+        if (btnTriggerSync) btnTriggerSync.disabled = true;
+        if (statusMsg) {
+          statusMsg.innerHTML = '<i class="fas fa-unlink text-muted"></i> Not connected';
+        }
+      }
     }
   };
 

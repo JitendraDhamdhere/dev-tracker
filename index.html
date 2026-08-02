@@ -897,6 +897,37 @@
                 <button id="btn-reset-dashboard" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Reset Dashboard Data</button>
               </div>
             </div>
+
+            <!-- Cloud Sync Card -->
+            <div class="glass-card">
+              <h3 class="chart-title" style="margin-bottom:16px;"><i class="fab fa-github"></i> GitHub Gist Cloud Sync</h3>
+              <p class="text-muted" style="font-size:12px; margin-bottom:16px;">
+                Synchronize your dashboard data automatically across devices using a private GitHub Gist.
+              </p>
+              
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label style="margin-bottom:6px;">GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="sync-github-token" class="form-control" placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxx">
+                <span class="text-muted" style="font-size:10px; margin-top:4px; display:block;">
+                  Create a token with <strong>gist</strong> permission in <a href="https://github.com/settings/tokens" target="_blank" style="color:var(--primary); text-decoration:underline;">GitHub Settings</a>.
+                </span>
+              </div>
+              
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label style="margin-bottom:6px;">Gist ID (Auto-created if empty)</label>
+                <input type="text" id="sync-gist-id" class="form-control" placeholder="Leave blank to create a new Gist">
+              </div>
+              
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+                <div style="font-size:11px; color:var(--text-secondary);" id="sync-status-msg">
+                  <i class="fas fa-unlink text-muted"></i> Not connected
+                </div>
+                <div style="display:flex; gap:8px;">
+                  <button id="btn-save-sync-settings" class="btn btn-secondary btn-sm"><i class="fas fa-save"></i> Save Token</button>
+                  <button id="btn-trigger-sync" class="btn btn-primary btn-sm" disabled><i class="fas fa-sync-alt"></i> Sync Now</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

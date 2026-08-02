@@ -117,6 +117,31 @@
     daily_planner: defaultDailyPlanner
   };
 
+  let syncTimeout = null;
+  let isSyncing = false;
+
+  function scheduleSyncPush() {
+    if (isSyncing) return;
+    const settings = window.StorageService.getSyncSettings();
+    if (!settings || !settings.pat) return;
+
+    if (syncTimeout) clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => {
+      window.StorageService.syncPush()
+        .then(() => {
+          if (window.Utils && typeof window.Utils.showToast === 'function') {
+            window.Utils.showToast('Cloud Synced', 'Your updates are saved to GitHub Gist.', 'success');
+          }
+        })
+        .catch(err => {
+          console.error('Auto-sync failed', err);
+          if (window.Utils && typeof window.Utils.showToast === 'function') {
+            window.Utils.showToast('Sync Failed', 'Could not sync updates to GitHub.', 'danger');
+          }
+        });
+    }, 5000);
+  }
+
   // Storage Methods
   window.StorageService = {
     get: function (key) {
@@ -132,6 +157,9 @@
     set: function (key, value) {
       try {
         localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+        if (key !== 'sync_pat' && key !== 'sync_gist_id') {
+          scheduleSyncPush();
+        }
       } catch (e) {
         console.error('Error saving to local storage', e);
         if (window.Utils && typeof window.Utils.showToast === 'function') {
@@ -171,7 +199,9 @@
         const rawKey = localStorage.key(i);
         if (rawKey.startsWith(STORAGE_PREFIX)) {
           const key = rawKey.substring(STORAGE_PREFIX.length);
-          dump[key] = this.get(key);
+          if (key !== 'sync_pat' && key !== 'sync_gist_id') {
+            dump[key] = this.get(key);
+          }
         }
       }
       return JSON.stringify(dump, null, 2);
@@ -198,6 +228,100 @@
         }
       }
       this.initialize();
+    },
+
+    saveSyncSettings: function (pat, gistId) {
+      this.set('sync_pat', pat);
+      this.set('sync_gist_id', gistId || '');
+    },
+
+    getSyncSettings: function () {
+      return {
+        pat: this.get('sync_pat') || '',
+        gistId: this.get('sync_gist_id') || ''
+      };
+    },
+
+    isSyncEnabled: function () {
+      const settings = this.getSyncSettings();
+      return !!settings.pat;
+    },
+
+    syncPush: async function () {
+      const settings = this.getSyncSettings();
+      if (!settings.pat) throw new Error('No GitHub Personal Access Token configured.');
+
+      const dump = this.exportData();
+      const payload = {
+        description: 'DevTrack Pro Dashboard Data Backup',
+        public: false,
+        files: {
+          'devtrack_pro_backup.json': {
+            content: dump
+          }
+        }
+      };
+
+      const headers = {
+        'Authorization': `token ${settings.pat}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      };
+
+      if (settings.gistId) {
+        // Update existing Gist
+        const res = await fetch(`https://api.github.com/gists/${settings.gistId}`, {
+          method: 'PATCH',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          if (res.status === 404) {
+            // Gist was deleted, create a new one instead
+            this.set('sync_gist_id', '');
+            return this.syncPush();
+          }
+          throw new Error(`GitHub Gist update failed: ${res.statusText}`);
+        }
+      } else {
+        // Create new private Gist
+        const res = await fetch('https://api.github.com/gists', {
+          method: 'POST',
+          headers: headers,
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(`GitHub Gist creation failed: ${res.statusText}`);
+        const data = await res.json();
+        this.set('sync_gist_id', data.id);
+      }
+    },
+
+    syncPull: async function () {
+      const settings = this.getSyncSettings();
+      if (!settings.pat) throw new Error('No GitHub Personal Access Token configured.');
+      if (!settings.gistId) throw new Error('No Gist ID configured yet. Try pushing data first.');
+
+      const headers = {
+        'Authorization': `token ${settings.pat}`,
+        'Accept': 'application/vnd.github.v3+json'
+      };
+
+      const res = await fetch(`https://api.github.com/gists/${settings.gistId}`, {
+        method: 'GET',
+        headers: headers
+      });
+      if (!res.ok) throw new Error(`GitHub Gist fetch failed: ${res.statusText}`);
+
+      const data = await res.json();
+      const backupFile = data.files['devtrack_pro_backup.json'];
+      if (!backupFile) throw new Error('Could not find devtrack_pro_backup.json in the specified Gist.');
+
+      isSyncing = true;
+      try {
+        this.importData(backupFile.content);
+      } finally {
+        isSyncing = false;
+      }
     }
   };
 
