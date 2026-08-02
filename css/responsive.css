@@ -107,3 +107,146 @@
     padding: 12px 16px;
   }
 }
+
+/* --- COMPREHENSIVE RESPONSIVENESS OVERRIDES --- */
+
+/* Touch Target Sizes & General Mobile Layout Improvements */
+@media screen and (max-width: 768px) {
+  /* Increase hit targets for comfortable tapping */
+  .btn {
+    min-height: 44px;
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  
+  .form-control, .form-select {
+    height: 44px !important;
+    font-size: 14px;
+  }
+  
+  .sidebar-link {
+    padding: 14px 20px !important;
+  }
+  
+  .pomo-tab {
+    padding: 12px 16px !important;
+  }
+
+  /* Prevent page horizontal overflow */
+  .view-panel {
+    overflow-x: hidden !important;
+  }
+
+  /* Header Title adjustment for small viewports */
+  .page-title {
+    font-size: 16px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+  
+  .header-left {
+    align-items: center;
+  }
+
+  /* Study Panel pomodoro and logs stack */
+  #view-study .dashboard-layout-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+  }
+
+  /* Daily Planner inline grids stack */
+  #view-daily-planner [style*="grid-template-columns"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Modal body form grids stack */
+  .modal-body [style*="grid-template-columns"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  /* Notes editor panel stack layout */
+  body .notes-container-layout {
+    flex-direction: column !important;
+    height: auto !important;
+  }
+  
+  body .notes-sidebar-pane {
+    width: 100% !important;
+    height: auto !important;
+  }
+  
+  body .notes-sidebar-list {
+    max-height: 200px !important;
+  }
+  
+  body .notes-editor-pane {
+    width: 100% !important;
+    height: 520px !important;
+  }
+
+  /* Kanban board scrolling */
+  .kanban-board {
+    max-width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 16px;
+  }
+
+  .kanban-column {
+    min-width: 280px !important;
+    max-height: 70vh !important;
+  }
+
+  .kanban-task-list {
+    max-height: 55vh !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Calendar horizontal scrolling */
+  body .calendar-container {
+    width: 100%;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  body .calendar-weekdays,
+  body .calendar-grid {
+    min-width: 600px !important;
+  }
+
+  /* Study Logs dynamic hover overrides (force actions buttons visible on touch) */
+  body .session-actions-wrapper {
+    opacity: 1 !important;
+    position: static !important;
+    margin-top: 12px !important;
+    justify-content: flex-end !important;
+  }
+}
+
+/* Tiny Mobile Viewports (<= 480px) */
+@media screen and (max-width: 480px) {
+  /* Resumes and lists card layouts */
+  .login-card {
+    padding: 30px 20px !important;
+    margin: 10px !important;
+    max-width: 95% !important;
+  }
+  
+  .login-header h2 {
+    font-size: 22px !important;
+  }
+
+  .modal-container {
+    width: 95% !important;
+    margin: 10px !important;
+    max-height: 92vh !important;
+  }
+}
+

@@ -450,10 +450,10 @@
     },
 
     resetDashboard: function () {
-      if (!confirm('Are you sure you want to completely RESET all dashboard statistics and reload mock details? All custom updates will be wiped.')) return;
+      if (!confirm('Are you sure you want to completely RESET all dashboard statistics and data? This will permanently wipe all your custom records and return the application to a clean, empty state.')) return;
 
       StorageService.resetAll();
-      Utils.showToast('Dashboard Resetting', 'Restoring developer defaults...', 'warning');
+      Utils.showToast('Dashboard Resetting', 'Clearing all custom data...', 'warning');
       setTimeout(() => window.location.reload(), 1500);
     }
   };
