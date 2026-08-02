@@ -406,3 +406,159 @@ button, input, textarea, select {
   font-size: 12px;
   color: var(--text-muted);
 }
+
+/* --- LOGIN SCREEN ACCENTS & STYLES --- */
+#login-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+/* Background Glowing blobs */
+.login-bg-glow {
+  position: absolute;
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.glow-1 {
+  background-color: var(--primary);
+  top: 15%;
+  left: 20%;
+}
+
+.glow-2 {
+  background-color: var(--secondary);
+  bottom: 15%;
+  right: 20%;
+}
+
+/* Glass card styling for Login */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 20px;
+  padding: 40px 32px;
+  text-align: center;
+  border-radius: 20px;
+  animation: loginFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.login-header h2 {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.login-header p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.login-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  background: rgba(59, 130, 246, 0.08);
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+/* Icon Inside Input Wrapper */
+.input-icon-wrapper {
+  position: relative;
+}
+
+.input-icon-wrapper .input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.input-icon-wrapper .form-control {
+  padding-left: 42px;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.login-error-msg {
+  color: var(--danger);
+  background-color: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Visibility classes */
+#app-container {
+  display: none;
+}
+
+html.logged-in #login-screen {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+html.logged-in #app-container {
+  display: flex;
+}
+
+/* Keyframes */
+@keyframes loginFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+

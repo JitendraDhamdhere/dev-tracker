@@ -4,9 +4,9 @@
   const STORAGE_PREFIX = 'devtrack_';
 
   const defaultProfile = {
-    name: 'Alex Mercer',
+    name: 'Jitendra Dhamdhere',
     role: 'Java Backend Developer (2+ YOE)',
-    avatar: 'AM',
+    avatar: 'JD',
     dailyTargetHours: 4,
     studyStreak: 12,
     githubGoal: 3, /* Commits per day */
@@ -247,7 +247,7 @@
       name: 'CloudCommerce Microservices',
       description: 'An enterprise-scale microservices e-commerce system built with Spring Boot, Spring Cloud, Eureka, Docker, and Kafka.',
       technologies: 'Spring Boot, Spring Cloud, Eureka, Gateway, Docker, Kafka, PostgreSQL',
-      github: 'https://github.com/alexmercer/cloud-commerce',
+      github: 'https://github.com/JitendraDhamdhere/cloud-commerce',
       live: 'https://cloud-commerce-demo.vercel.app',
       status: 'In Progress',
       progress: 75,
@@ -268,7 +268,7 @@
       name: 'QueryOptimizer CLI tool',
       description: 'A command-line analysis tool designed to audit MySQL query logs, identify non-indexed queries, and offer optimization recommendations.',
       technologies: 'Java Core, MySQL, JDBC, CLI-Parser',
-      github: 'https://github.com/alexmercer/query-optimizer',
+      github: 'https://github.com/JitendraDhamdhere/query-optimizer',
       live: '',
       status: 'Completed',
       progress: 100,
@@ -364,7 +364,7 @@
       source: 'LinkedIn',
       appDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       resumeVersion: 'v2.1 (SaaS Profile)',
-      portfolioLink: 'https://github.com/alexmercer',
+      portfolioLink: 'https://github.com/JitendraDhamdhere',
       hrName: 'Megan Kelly',
       hrEmail: 'megan.k@stripe.com',
       linkedinUrl: 'https://linkedin.com/in/megan-k-stripe',
@@ -388,7 +388,7 @@
       source: 'Indeed',
       appDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       resumeVersion: 'v1.4 (Generic FinTech)',
-      portfolioLink: 'https://github.com/alexmercer',
+      portfolioLink: 'https://github.com/JitendraDhamdhere',
       hrName: 'Adam Smith',
       hrEmail: 'adam.smith@capitalone.com',
       linkedinUrl: '',
@@ -412,7 +412,7 @@
       source: 'Amazon Careers',
       appDate: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       resumeVersion: 'v2.1 (SaaS Profile)',
-      portfolioLink: 'https://github.com/alexmercer',
+      portfolioLink: 'https://github.com/JitendraDhamdhere',
       hrName: 'Jessica Parker',
       hrEmail: 'parkerj@amazon.com',
       linkedinUrl: '',
@@ -436,7 +436,7 @@
       source: 'Referral',
       appDate: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       resumeVersion: 'v2.1 (SaaS Profile)',
-      portfolioLink: 'https://github.com/alexmercer',
+      portfolioLink: 'https://github.com/JitendraDhamdhere',
       hrName: 'Ryan Reynolds',
       hrEmail: 'ryanr@netflix.com',
       linkedinUrl: '',
@@ -544,8 +544,9 @@
     },
 
     initialize: function () {
-      // Check if profile exists, if not, write defaults
-      if (!localStorage.getItem(STORAGE_PREFIX + 'profile')) {
+      // Check if profile exists, if not, write defaults. Reset if old Alex Mercer profile.
+      const existingProfile = this.get('profile');
+      if (!existingProfile || existingProfile.name === 'Alex Mercer' || existingProfile.avatar === 'AM') {
         console.log('Seeding initial developer data...');
         for (const [key, value] of Object.entries(defaultState)) {
           this.set(key, value);

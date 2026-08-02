@@ -4,7 +4,6 @@
   document.addEventListener('DOMContentLoaded', () => {
     App.init();
   });
-
   const App = {
     init: function () {
       this.initTheme();
@@ -12,11 +11,14 @@
       this.initMobileSidebar();
       this.initGlobalSearch();
       this.initProfileFooter();
+      this.initAuth();
       
       // Initialize sub-modules if loaded
       this.initializeModules();
       
-      Utils.showToast('Welcome back, Alex!', 'Let\'s write some code today!', 'success');
+      if (sessionStorage.getItem('devtrack_logged_in') === 'true') {
+        Utils.showToast('Welcome back, Jitu!', 'Let\'s write some code today!', 'success');
+      }
     },
 
     // Theme Manager
@@ -316,8 +318,16 @@
     },
 
     initProfileFooter: function () {
-      const profile = StorageService.get('profile');
+      let profile = StorageService.get('profile');
       if (profile) {
+        if (profile.name === 'Alex Mercer') {
+          profile.name = 'Jitendra Dhamdhere';
+          StorageService.set('profile', profile);
+        }
+        if (profile.avatar === 'AM') {
+          profile.avatar = 'JD';
+          StorageService.set('profile', profile);
+        }
         const nameEl = document.querySelector('.profile-name');
         const roleEl = document.querySelector('.profile-role');
         const avatarEl = document.querySelector('.profile-avatar');
@@ -325,6 +335,54 @@
         if (nameEl) nameEl.textContent = profile.name;
         if (roleEl) roleEl.textContent = profile.role;
         if (avatarEl) avatarEl.textContent = profile.avatar || profile.name.split(' ').map(n => n[0]).join('');
+      }
+    },
+
+    initAuth: function () {
+      const loginForm = document.getElementById('login-form');
+      const logoutBtn = document.getElementById('logout-btn');
+      const errorMsg = document.getElementById('login-error');
+      
+      if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const usernameInput = document.getElementById('login-username');
+          const passwordInput = document.getElementById('login-password');
+          
+          const username = usernameInput.value.trim();
+          const password = passwordInput.value;
+          
+          if (username === 'Jitu' && password === '6462') {
+            // Credentials correct
+            sessionStorage.setItem('devtrack_logged_in', 'true');
+            document.documentElement.classList.add('logged-in');
+            if (errorMsg) errorMsg.style.display = 'none';
+            
+            // Clear inputs
+            usernameInput.value = '';
+            passwordInput.value = '';
+            
+            // Show welcome message
+            Utils.showToast('Access Granted', 'Welcome back, Jitu! Dashboard loaded.', 'success');
+          } else {
+            // Credentials incorrect
+            if (errorMsg) errorMsg.style.display = 'flex';
+            const card = document.querySelector('.login-card');
+            if (card) {
+              card.style.animation = 'none';
+              card.offsetHeight; /* trigger reflow */
+              card.style.animation = 'shake 0.4s ease-in-out';
+            }
+          }
+        });
+      }
+      
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+          sessionStorage.removeItem('devtrack_logged_in');
+          document.documentElement.classList.remove('logged-in');
+          Utils.showToast('Signed Out', 'You have been signed out successfully.', 'info');
+        });
       }
     },
 

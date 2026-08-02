@@ -18,6 +18,16 @@
   
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Quick inline precheck to avoid dashboard flicker if already authenticated -->
+  <script>
+    (function() {
+      const loggedIn = sessionStorage.getItem('devtrack_logged_in') === 'true';
+      if (loggedIn) {
+        document.documentElement.classList.add('logged-in');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -127,9 +137,9 @@
       </ul>
       
       <div class="sidebar-footer">
-        <div class="profile-avatar">AM</div>
+        <div class="profile-avatar">JD</div>
         <div class="profile-info">
-          <span class="profile-name">Alex Mercer</span>
+          <span class="profile-name">Jitendra Dhamdhere</span>
           <span class="profile-role">Java Backend Developer</span>
         </div>
       </div>
@@ -159,6 +169,9 @@
             </button>
             <button class="header-btn" onclick="App.navigateToTab('study')" title="Quick Timer">
               <i class="far fa-clock"></i>
+            </button>
+            <button id="logout-btn" class="header-btn" title="Sign Out">
+              <i class="fas fa-sign-out-alt"></i>
             </button>
           </div>
         </div>
@@ -1370,7 +1383,7 @@
           <input type="hidden" id="resume-id">
           <div class="form-group">
             <label>Resume File Name</label>
-            <input type="text" id="resume-name" class="form-control" placeholder="e.g. Alex_Mercer_Backend_v2" required>
+            <input type="text" id="resume-name" class="form-control" placeholder="e.g. Jitendra_Dhamdhere_Backend_v2" required>
           </div>
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
             <div class="form-group">
@@ -1466,6 +1479,49 @@
           <button type="button" class="btn btn-secondary" onclick="App.closeModal('modal-cert-editor')">Cancel</button>
           <button type="submit" class="btn btn-primary">Save Certificate</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login Screen Overlay -->
+  <div id="login-screen">
+    <div class="login-bg-glow glow-1"></div>
+    <div class="login-bg-glow glow-2"></div>
+    
+    <div class="login-card glass-card">
+      <div class="login-header">
+        <div class="login-logo">
+          <i class="fas fa-terminal"></i>
+          <span>DevTrack Pro</span>
+        </div>
+        <h2>Welcome Back</h2>
+        <p>Enter your credentials to access your productivity dashboard</p>
+      </div>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-username">Username</label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" id="login-username" class="form-control" placeholder="Enter username" required autocomplete="username">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <div class="input-icon-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" id="login-password" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+          </div>
+        </div>
+        
+        <div id="login-error" class="login-error-msg" style="display: none;">
+          <i class="fas fa-exclamation-circle"></i> Invalid username or password.
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-block">
+          <i class="fas fa-sign-in-alt"></i> Sign In
+        </button>
       </form>
     </div>
   </div>
